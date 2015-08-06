@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 02-ago-2015 18:14:49 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.chrisom.sisinv.entity.NotaRemisionDetalle" table="nota_remision_detalle" catalog="dbsisinv">
+        <composite-id name="id" class="com.chrisom.sisinv.entity.NotaRemisionDetalleId">
+            <key-property name="cantidad" type="int">
+                <column name="cantidad" />
+            </key-property>
+            <key-property name="precio" type="double">
+                <column name="precio" precision="22" scale="0" />
+            </key-property>
+            <key-property name="notaRemisionIdentificador" type="int">
+                <column name="nota_remision_identificador" />
+            </key-property>
+            <key-property name="productosId" type="string">
+                <column name="productos_id" length="7" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="productos" class="com.chrisom.sisinv.entity.Productos" update="false" insert="false" fetch="select">
+            <column name="productos_id" length="7" not-null="true" />
+        </many-to-one>
+        <many-to-one name="notaRemision" class="com.chrisom.sisinv.entity.NotaRemision" update="false" insert="false" fetch="select">
+            <column name="nota_remision_identificador" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>
