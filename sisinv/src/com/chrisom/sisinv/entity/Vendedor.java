@@ -1,5 +1,5 @@
 package com.chrisom.sisinv.entity;
-// Generated 02-ago-2015 18:14:48 by Hibernate Tools 3.4.0.CR1
+// Generated 09-ago-2015 19:16:00 by Hibernate Tools 3.4.0.CR1
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +27,16 @@ public class Vendedor implements java.io.Serializable {
 		this.usuario = usuario;
 		this.password = password;
 	}
-
+	
+	public Vendedor(String id, String nombre, String direccion, String telefono, String usuario, String password) {
+		this.id = id;
+		this.nombre = nombre;
+		this.direccion = direccion;
+		this.telefono = telefono;
+		this.usuario = usuario;
+		this.password = password;
+	}
+	
 	public Vendedor(String id, String nombre, String direccion, String telefono, String usuario, String password,
 			Set notaRemisions) {
 		this.id = id;
