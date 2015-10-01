@@ -25,7 +25,7 @@ public class Productos implements java.io.Serializable {
 		this.precioCompra = precioCompra;
 		this.porcentaje = porcentaje;
 	}
-
+	
 	public Productos(String id, String nombre, double precioCompra, int porcentaje, Boolean iva,
 			Set notaRemisionDetalles) {
 		this.id = id;
@@ -35,7 +35,15 @@ public class Productos implements java.io.Serializable {
 		this.iva = iva;
 		this.notaRemisionDetalles = notaRemisionDetalles;
 	}
-
+	
+	public Productos(String id, String nombre, double precioCompra, int porcentaje, Boolean iva) {
+		this.id = id;
+		this.nombre = nombre;
+		this.precioCompra = precioCompra;
+		this.porcentaje = porcentaje;
+		this.iva = iva;
+	}
+	
 	public String getId() {
 		return this.id;
 	}

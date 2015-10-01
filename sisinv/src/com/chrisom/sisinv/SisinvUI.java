@@ -2,18 +2,18 @@ package com.chrisom.sisinv;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.chrisom.sisinv.entity.Vendedor;
 import com.chrisom.sisinv.model.VendedorModel;
 import com.chrisom.sisinv.ui.Menu;
 import com.chrisom.sisinv.ui.UIConstants;
-import com.chrisom.sisinv.utils.Algorithms;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -21,7 +21,8 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
 @SuppressWarnings("serial")
-@Theme("valo")
+@Widgetset("AppWidgetSet")
+@Theme("valo") 
 public class SisinvUI extends UI {
 
 	@WebServlet(value = "/*", asyncSupported = true)
@@ -37,7 +38,7 @@ public class SisinvUI extends UI {
 		
 		content.setMargin(true);
 		TextField name = new TextField(UIConstants.LOGIN_NAME);
-		TextField password = new TextField(UIConstants.LOGIN_PASSWORD);
+		PasswordField password = new PasswordField(UIConstants.LOGIN_PASSWORD);
 		name.setValue("chrisom");
 		password.setValue("password");
 		

@@ -5,7 +5,7 @@
 <hibernate-mapping>
     <class name="com.chrisom.sisinv.entity.Productos" table="productos" catalog="dbsisinv">
         <id name="id" type="string">
-            <column name="id" length="7" />
+            <column name="id" length="30" />
             <generator class="assigned" />
         </id>
         <property name="nombre" type="string">
