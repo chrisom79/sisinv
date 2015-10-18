@@ -6,12 +6,12 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.chrisom.sisinv.entity.Productos;
+import com.chrisom.sisinv.entity.Producto;
 
-public class ProductoDAO implements DAOInterface<Productos> {
+public class ProductoDAO implements DAOInterface<Producto> {
 
 	@Override
-	public void insert(Productos element) {
+	public void insert(Producto element) {
 		Session session = SessionFactoryDB.getSessionFactory().openSession();
 		try {
 			
@@ -25,7 +25,7 @@ public class ProductoDAO implements DAOInterface<Productos> {
 	}
 
 	@Override
-	public void update(Productos element) {
+	public void update(Producto element) {
 		Session session = SessionFactoryDB.getSessionFactory().openSession();
 		try {
 			
@@ -52,7 +52,7 @@ public class ProductoDAO implements DAOInterface<Productos> {
 		try {
 			
 			session.beginTransaction();
-			Query query = session.createQuery("delete Productos where id = :id");
+			Query query = session.createQuery("delete Producto where id = :id");
 			query.setParameter("id", field);
 			query.executeUpdate();
 			session.getTransaction().commit();
@@ -64,10 +64,10 @@ public class ProductoDAO implements DAOInterface<Productos> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Productos> findProductoByNombre(String nombre){
-		List<Productos> productos = new ArrayList<Productos>();
+	public List<Producto> findProductoByNombre(String nombre){
+		List<Producto> productos = new ArrayList<Producto>();
 		Session session = SessionFactoryDB.getSessionFactory().openSession();
-		Query query = session.createQuery("from Productos where nombre like :nombre");
+		Query query = session.createQuery("from Producto where nombre like :nombre");
 		
 		query.setParameter("nombre", "%" + nombre + "%");
 		
@@ -75,38 +75,28 @@ public class ProductoDAO implements DAOInterface<Productos> {
 		return productos;
 	}
 	
-	public Productos findProductoByCode(String id){
-		Productos producto = new Productos();
+	public Producto findProductoByCode(String id){
+		Producto producto = new Producto();
 		Session session = SessionFactoryDB.getSessionFactory().openSession();
-		Query query = session.createQuery("from Productos where id like :id");
+		Query query = session.createQuery("from Producto where id like :id");
 		
 		query.setParameter("id", id);
 		
-		producto = (Productos) query.uniqueResult();
+		producto = (Producto) query.uniqueResult();
 		return producto;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Productos> findProductoByParameters(String id, String nombre) {
-		List<Productos> productos = new ArrayList<Productos>();
+	public List<Producto> findProductoByParameters(String id) {
+		List<Producto> productos = new ArrayList<Producto>();
 		Session session = SessionFactoryDB.getSessionFactory().openSession();
-		StringBuffer querySb = new StringBuffer("from Productos where ");
-		
-		if(id != null && !id.isEmpty()) {
-			querySb.append("id like :id ");
-		} 
-		if(nombre != null && !nombre.isEmpty()) {
-			querySb.append("nombre like :name ");
-		}
+		StringBuffer querySb = new StringBuffer("from Producto where id like :id or nombre like :id");
 		
 		Query query = session.createQuery(querySb.toString()); 
 		
 		if(id != null && !id.isEmpty()) {
 			query.setParameter("id", "%" + id + "%");
 		} 
-		if(nombre != null && !nombre.isEmpty()) {
-			query.setParameter("name", "%" + nombre + "%");
-		}
 		
 		productos = query.list();
 		return productos;

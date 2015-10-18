@@ -10,11 +10,15 @@ import java.util.Set;
  */
 public class NotaRemision implements java.io.Serializable {
 
-	private Integer identificador;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7719128964041487555L;
+	private Integer id;
 	private Vendedor vendedor;
 	private Date fecha;
 	private double total;
-	private Set notaRemisionDetalles = new HashSet(0);
+	private Set<NotaRemisionDetalle> notaRemisionDetalles = new HashSet<NotaRemisionDetalle>(0);
 
 	public NotaRemision() {
 	}
@@ -25,19 +29,19 @@ public class NotaRemision implements java.io.Serializable {
 		this.total = total;
 	}
 
-	public NotaRemision(Vendedor vendedor, Date fecha, double total, Set notaRemisionDetalles) {
+	public NotaRemision(Vendedor vendedor, Date fecha, double total, Set<NotaRemisionDetalle> notaRemisionDetalles) {
 		this.vendedor = vendedor;
 		this.fecha = fecha;
 		this.total = total;
 		this.notaRemisionDetalles = notaRemisionDetalles;
 	}
 
-	public Integer getIdentificador() {
-		return this.identificador;
+	public Integer getId() {
+		return this.id;
 	}
 
-	public void setIdentificador(Integer identificador) {
-		this.identificador = identificador;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public Vendedor getVendedor() {
@@ -64,11 +68,11 @@ public class NotaRemision implements java.io.Serializable {
 		this.total = total;
 	}
 
-	public Set getNotaRemisionDetalles() {
+	public Set<NotaRemisionDetalle> getNotaRemisionDetalles() {
 		return this.notaRemisionDetalles;
 	}
 
-	public void setNotaRemisionDetalles(Set notaRemisionDetalles) {
+	public void setNotaRemisionDetalles(Set<NotaRemisionDetalle> notaRemisionDetalles) {
 		this.notaRemisionDetalles = notaRemisionDetalles;
 	}
 

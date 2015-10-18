@@ -9,6 +9,7 @@ public class Menu {
 		MenuBar mainBar =  new MenuBar();
 		VendedorUI vendedorUI = new VendedorUI();
 		ProductoUI productoUI = new ProductoUI();
+		NotaUI notaUI = new NotaUI();
 		
 		MenuBar.Command command = new MenuBar.Command() {
 			
@@ -27,8 +28,8 @@ public class Menu {
 					ui.addWindow(productoUI.createWindowNew());
 				} else if(selectedItem.getText().equals(UIConstants.BUSCAR_PRODUCTO_ITEM)){
 					ui.addWindow(productoUI.createWindowSrch());
-				} else if(selectedItem.getText().equals(UIConstants.CREAR_NOTAS)){
-					
+				} else if(selectedItem.getText().equals(UIConstants.CREAR_PEDIDO_ITEM)){
+					ui.addWindow(notaUI.createWindowNew());
 				}
 			}
 		};
@@ -41,8 +42,8 @@ public class Menu {
 		productos.addItem(UIConstants.CREAR_PRODUCTO_ITEM, command);
 		productos.addItem(UIConstants.BUSCAR_PRODUCTO_ITEM, command);
 		
-		MenuItem notas = mainBar.addItem(UIConstants.NOTAS_REMISION, null, null);
-		notas.addItem(UIConstants.CREAR_NOTAS, command);
+		MenuItem notas = mainBar.addItem(UIConstants.PEDIDO_ITEM, null, null);
+		notas.addItem(UIConstants.CREAR_PEDIDO_ITEM, command);
 		
 		return mainBar;
 	}

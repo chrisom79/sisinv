@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <!-- Generated 09-ago-2015 19:16:01 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
-    <class name="com.chrisom.sisinv.entity.Productos" table="productos" catalog="dbsisinv">
+    <class name="com.chrisom.sisinv.entity.Producto" table="producto" catalog="dbsisinv">
         <id name="id" type="string">
             <column name="id" length="30" />
             <generator class="assigned" />

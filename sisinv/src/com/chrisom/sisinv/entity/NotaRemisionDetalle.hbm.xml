@@ -11,18 +11,18 @@
             <key-property name="precio" type="double">
                 <column name="precio" precision="22" scale="0" />
             </key-property>
-            <key-property name="notaRemisionIdentificador" type="int">
-                <column name="nota_remision_identificador" />
+            <key-property name="notaRemisionId" type="int">
+                <column name="nota_remision_id" />
             </key-property>
             <key-property name="productosId" type="string">
                 <column name="productos_id" length="7" />
             </key-property>
         </composite-id>
-        <many-to-one name="productos" class="com.chrisom.sisinv.entity.Productos" update="false" insert="false" fetch="select">
+        <many-to-one name="productos" class="com.chrisom.sisinv.entity.Producto" update="false" insert="false" fetch="select">
             <column name="productos_id" length="7" not-null="true" />
         </many-to-one>
         <many-to-one name="notaRemision" class="com.chrisom.sisinv.entity.NotaRemision" update="false" insert="false" fetch="select">
-            <column name="nota_remision_identificador" not-null="true" />
+            <column name="nota_remision_id" not-null="true" />
         </many-to-one>
     </class>
 </hibernate-mapping>

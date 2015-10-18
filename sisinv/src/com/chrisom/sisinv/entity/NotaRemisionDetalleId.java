@@ -8,16 +8,16 @@ public class NotaRemisionDetalleId implements java.io.Serializable {
 
 	private int cantidad;
 	private double precio;
-	private int notaRemisionIdentificador;
+	private int notaRemisionId;
 	private String productosId;
 
 	public NotaRemisionDetalleId() {
 	}
 
-	public NotaRemisionDetalleId(int cantidad, double precio, int notaRemisionIdentificador, String productosId) {
+	public NotaRemisionDetalleId(int cantidad, double precio, int notaRemisionId, String productosId) {
 		this.cantidad = cantidad;
 		this.precio = precio;
-		this.notaRemisionIdentificador = notaRemisionIdentificador;
+		this.notaRemisionId = notaRemisionId;
 		this.productosId = productosId;
 	}
 
@@ -37,12 +37,12 @@ public class NotaRemisionDetalleId implements java.io.Serializable {
 		this.precio = precio;
 	}
 
-	public int getNotaRemisionIdentificador() {
-		return this.notaRemisionIdentificador;
+	public int getNotaRemisionId() {
+		return this.notaRemisionId;
 	}
 
-	public void setNotaRemisionIdentificador(int notaRemisionIdentificador) {
-		this.notaRemisionIdentificador = notaRemisionIdentificador;
+	public void setNotaRemisionId(int notaRemisionId) {
+		this.notaRemisionId = notaRemisionId;
 	}
 
 	public String getProductosId() {
@@ -63,7 +63,7 @@ public class NotaRemisionDetalleId implements java.io.Serializable {
 		NotaRemisionDetalleId castOther = (NotaRemisionDetalleId) other;
 
 		return (this.getCantidad() == castOther.getCantidad()) && (this.getPrecio() == castOther.getPrecio())
-				&& (this.getNotaRemisionIdentificador() == castOther.getNotaRemisionIdentificador())
+				&& (this.getNotaRemisionId() == castOther.getNotaRemisionId())
 				&& ((this.getProductosId() == castOther.getProductosId())
 						|| (this.getProductosId() != null && castOther.getProductosId() != null
 								&& this.getProductosId().equals(castOther.getProductosId())));
@@ -74,7 +74,7 @@ public class NotaRemisionDetalleId implements java.io.Serializable {
 
 		result = 37 * result + this.getCantidad();
 		result = 37 * result + (int) this.getPrecio();
-		result = 37 * result + this.getNotaRemisionIdentificador();
+		result = 37 * result + this.getNotaRemisionId();
 		result = 37 * result + (getProductosId() == null ? 0 : this.getProductosId().hashCode());
 		return result;
 	}

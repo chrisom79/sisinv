@@ -2,9 +2,10 @@ package com.chrisom.sisinv.ui;
 
 import java.util.List;
 
-import com.chrisom.sisinv.entity.Productos;
+import com.chrisom.sisinv.entity.Producto;
 import com.chrisom.sisinv.model.ProductoModel;
 import com.chrisom.sisinv.model.VendedorModel;
+import com.chrisom.sisinv.utils.ProductoUtils;
 import com.jensjansson.pagedtable.PagedTable;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
@@ -31,7 +32,6 @@ public class ProductoUI {
 	TextField porcentaje = null;
 	CheckBox iva = null;
 	TextField idSrch = null;
-	AutocompleteField<Productos> nameSrch = null;
 	
 	public Window createWindowNew() {
 		Window prodWindow = new Window(UIConstants.CREAR_PRODUCTO_ITEM);
@@ -69,14 +69,8 @@ public class ProductoUI {
 		HorizontalLayout subcontent1 = new HorizontalLayout();
 		HorizontalLayout subcontent2 = new HorizontalLayout();
 		idSrch = createIdSearchField(container, result);
-		AutocompleteField<Productos> nombreSrch = createSearchField();
-		nombreSrch.setDelay(200);
-		nombreSrch.setWidth("100%");
-		
-		
 		
 		subcontent1.addComponent(idSrch);
-		subcontent1.addComponent(nombreSrch);
 		subcontent2.addComponent(createSearchButton(container, result));
 		
 		result.setContainerDataSource(container);
@@ -119,7 +113,7 @@ public class ProductoUI {
 		
 		if(code != null && !code.isEmpty()) {
 			ProductoModel model = new ProductoModel();
-			Productos producto = model.findProductoByCode(code);
+			Producto producto = model.findProductoByCode(code);
 			
 			if(producto != null) {
 				id.setValue(producto.getId());
@@ -154,7 +148,7 @@ public class ProductoUI {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				Productos producto = new Productos(id.getValue(), nombre.getValue(), Double.parseDouble(precioCompra.getValue()), 
+				Producto producto = new Producto(id.getValue(), nombre.getValue(), Double.parseDouble(precioCompra.getValue()), 
 						Integer.parseInt(porcentaje.getValue()), iva.getValue());
 				Window window = (Window) id.getParent().getParent();
 				if(UIConstants.CREAR_PRODUCTO_ITEM.equalsIgnoreCase(window.getCaption()))
@@ -188,31 +182,6 @@ public class ProductoUI {
 		
 		return button;
 	}
-	
-	private AutocompleteField<Productos> createSearchField() {
-		nameSrch = new AutocompleteField<>();
-		nameSrch.setCaption(UIConstants.PRODUCTO_NOMBRE);
-		ProductoModel model = new ProductoModel();
-		nameSrch.setQueryListener(new AutocompleteQueryListener<Productos>() {
-			@Override
-		     public void handleUserQuery(AutocompleteField<Productos> field, String query) {
-		        List<Productos> productos = model.findProductoByNombre(query);
-		        for(Productos prod : productos) {
-		        	field.addSuggestion(prod, prod.getNombre());
-		        }
-		     }
-		});
-	    
-	    nameSrch.setSuggestionPickedListener(new AutocompleteSuggestionPickedListener<Productos>() {  
-	    	@Override
-		    public void onSuggestionPicked(Productos page) {
-		        
-		    }
-	    });
-	    
-	    nameSrch.setStyleName("sisinv");
-	    return nameSrch;
-	} 
 	
 	private IndexedContainer createResultContainer() {
 		IndexedContainer container = new IndexedContainer();
@@ -289,15 +258,14 @@ public class ProductoUI {
 	
 	private void executeFindProductosByParameters(IndexedContainer container, PagedTable table) {
 		ProductoModel model = new ProductoModel();
-		List<Productos> productos = model.findProductoByParameters(idSrch.getValue(), 
-				nameSrch.getText());
+		List<Producto> productos = model.findProductoByParameters(idSrch.getValue());
 		container.removeAllItems();
-		for(Productos producto : productos) {
+		for(Producto producto : productos) {
 			Object id = container.addItem();
 			Item item = container.getItem(id);
 			item.getItemProperty(UIConstants.PRODUCTO_NOMBRE).setValue(producto.getNombre());
 			item.getItemProperty(UIConstants.PRODUCTO_PRECIO_COMPRA).setValue(producto.getPrecioCompra());
-			item.getItemProperty(UIConstants.PRODUCTO_PRECIO_VENTA).setValue(calculatePrecioVenta(producto.getPrecioCompra(), producto.getPorcentaje()));
+			item.getItemProperty(UIConstants.PRODUCTO_PRECIO_VENTA).setValue(ProductoUtils.calculatePrecioVenta(producto.getPrecioCompra(), producto.getPorcentaje()));
 			item.getItemProperty(UIConstants.PRODUCTO_IVA).setValue(producto.getIva()? "Si":"No");
 			item.getItemProperty(UIConstants.LAUNCH_WINDOW).setValue(createLaunchButton((UI)table.getParent().getParent().getParent(), (Window)table.getParent().getParent(), producto.getId()));
 			item.getItemProperty(UIConstants.REMOVE).setValue(createRemoveButton(table, id, producto.getId()));
@@ -306,9 +274,5 @@ public class ProductoUI {
 		
 		table.refreshRowCache();
 	}
-	private static Double calculatePrecioVenta(Double precioCompra, Integer ganancia){
-		Double total = precioCompra + (precioCompra * (ganancia.doubleValue() / 100.0));
-		
-		return total;
-	}
+	
 }

@@ -7,13 +7,13 @@ package com.chrisom.sisinv.entity;
 public class NotaRemisionDetalle implements java.io.Serializable {
 
 	private NotaRemisionDetalleId id;
-	private Productos productos;
+	private Producto productos;
 	private NotaRemision notaRemision;
 
 	public NotaRemisionDetalle() {
 	}
 
-	public NotaRemisionDetalle(NotaRemisionDetalleId id, Productos productos, NotaRemision notaRemision) {
+	public NotaRemisionDetalle(NotaRemisionDetalleId id, Producto productos, NotaRemision notaRemision) {
 		this.id = id;
 		this.productos = productos;
 		this.notaRemision = notaRemision;
@@ -27,11 +27,11 @@ public class NotaRemisionDetalle implements java.io.Serializable {
 		this.id = id;
 	}
 
-	public Productos getProductos() {
+	public Producto getProductos() {
 		return this.productos;
 	}
 
-	public void setProductos(Productos productos) {
+	public void setProductos(Producto productos) {
 		this.productos = productos;
 	}
 
