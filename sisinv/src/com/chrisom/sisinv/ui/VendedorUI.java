@@ -165,7 +165,8 @@ public class VendedorUI {
 			public void buttonClick(ClickEvent event) {
 				if(!model.existsUsername(usuarioLbl.getValue())) {
 					Vendedor vendedor = new Vendedor(model.createId(nombreLbl.getValue()), nombreLbl.getValue(),
-							direccionLbl.getValue(), telefonoLbl.getValue(), usuarioLbl.getValue(), Algorithms.encryptMD5("password"));
+							telefonoLbl.getValue(), usuarioLbl.getValue(), Algorithms.encryptMD5("password"));
+					vendedor.setDireccion(direccionLbl.getValue());
 					model.insertVendedor(vendedor);
 					
 					Window window = (Window) direccionLbl.getParent().getParent();

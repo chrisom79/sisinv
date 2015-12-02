@@ -5,12 +5,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.chrisom.sisinv.entity.NotaRemision;
 import com.chrisom.sisinv.entity.NotaRemisionDetalle;
 import com.chrisom.sisinv.entity.NotaRemisionDetalleId;
 import com.chrisom.sisinv.entity.Producto;
+import com.chrisom.sisinv.entity.Vendedor;
 import com.chrisom.sisinv.model.PedidoModel;
 import com.chrisom.sisinv.model.ProductoModel;
+import com.chrisom.sisinv.model.VendedorModel;
 import com.chrisom.sisinv.utils.ProductoUtils;
+import com.jensjansson.pagedtable.PagedTable;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.ShortcutAction;
@@ -34,13 +38,17 @@ public class NotaUI {
 	DateField fecha = null;
 	TextField numero = null;
 	TextField nombre = null;
-	TextField searcher = null;
+	TextField prodSearcher = null;
+	TextField vendSearcher = null;
 	Set<NotaRemisionDetalle> prodsPedido = null;
+	Vendedor vendPedido = null;
 	Panel addProdPnl = null;
 	Panel mngmtProdPnl = null;
+	Panel vendProdPnl = null;
 	IndexedContainer pedidoCntnr = null;
 	Table pedidoTbl = null;
 	PedidoModel model = new PedidoModel();
+	Label totalLbl = null;
 	
 	public Window createWindowNew() {
 		Window notaWndw = new Window(UIConstants.PEDIDO_ITEM);
@@ -56,27 +64,28 @@ public class NotaUI {
 		nombre = new TextField(UIConstants.PEDIDO_NOMBRE);
 		addProdPnl = createPanelAddProductos();
 		mngmtProdPnl = createPanelMngmtProductos();
+		vendProdPnl = createPanelVendedorProductos();
 		Button cartButton = createCartButton();
-		Button nextBtn = createNextButton();
+		Button pedidoBtn = createPedidoButton();
+		Button vendBtn = createVendedorButton();
 		
 		fecha.setValue(new Date());
 		numero.setValue(model.getNewId().toString());
 		nombre.setWidth("400");
+		hcontent.addComponent(pedidoBtn);
+		hcontent.addComponent(vendBtn);
 		hcontent.addComponent(cartButton);
 		
 		subcontent1.addComponent(fecha, 0, 0);
-		//subcontent2.setComponentAlignment(fecha, Alignment.MIDDLE_RIGHT);
 		subcontent1.addComponent(numero, 1, 0);
-		//subcontent4.setComponentAlignment(numero, Alignment.MIDDLE_RIGHT);
 		subcontent1.addComponent(nombre, 2, 0, 4, 0);
 		subcontent1.addComponent(hcontent, 0, 1);
-		//subcontent1.addComponent(nextBtn, 4, 1);
 		subcontent1.addComponent(addProdPnl, 0, 2, 4, 3);
-		//subcontent1.addComponent(mngmtProdPnl, 4, 2, 9, 3);
 		hcontent.setMargin(true);
 		hcontent.setSpacing(true);
 		subcontent1.setMargin(true);
 		subcontent1.setSpacing(true);
+		prodSearcher.focus();
 		
 		content.addComponent(subcontent1);
 		
@@ -100,6 +109,20 @@ public class NotaUI {
 		return prodSrchr;
 	}
 	
+	private TextField createVendedorSearcher(IndexedContainer container, Table result) {
+		TextField vendSrchr = new TextField(UIConstants.PEDIDO_VENDEDOR_SRCHR);
+		
+		
+		vendSrchr.addShortcutListener(new ShortcutListener("shortcutId", ShortcutAction.KeyCode.ENTER, null) {
+		    @Override
+		    public void handleAction(Object sender, Object target) {
+		    	executeFindVendedorByParameters(container, result);
+		    }
+		});
+		
+		return vendSrchr;
+	}
+	
 	private Button createAddButton(Producto prod, TextField cant) {
 		Button button = new Button();
 		button.setIcon(FontAwesome.PLUS_SQUARE_O);
@@ -115,20 +138,16 @@ public class NotaUI {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				if(cant.getValue() != null && !cant.getValue().isEmpty()) {
-					NotaRemisionDetalleId itemId = new NotaRemisionDetalleId();
-					itemId.setNotaRemisionId(Integer.valueOf(numero.getValue()));
-					itemId.setProductosId(prod.getId());
-					if(cant.getValue() != null && !cant.getValue().isEmpty())
-						itemId.setCantidad(Integer.valueOf(cant.getValue()));
-					itemId.setPrecio(ProductoUtils.calculatePrecioVenta(prod.getPrecioCompra(), prod.getPorcentaje()));
-					
 					NotaRemisionDetalle item = new NotaRemisionDetalle();
-					item.setId(itemId);
-					item.setProductos(prod);
-					
+					item.setId(Integer.valueOf(numero.getValue()));
+					item.setProductoId(prod.getId());
+					if(cant.getValue() != null && !cant.getValue().isEmpty())
+						item.setCantidad(Integer.valueOf(cant.getValue()));
+					item.setPrecio(ProductoUtils.calculatePrecioVenta(prod.getPrecioCompra(), prod.getPorcentaje()));
 					prodsPedido.add(item);
 					
 					refreshPedidoContainer();
+					totalLbl.setValue("Total: " + ProductoUtils.sumaImportes(pedidoTbl));
 					Notification.show("Producto agregado",
 			                  "El producto ha sido agregado al pedido",
 			                  Notification.Type.TRAY_NOTIFICATION);
@@ -142,9 +161,9 @@ public class NotaUI {
 		return button;
 	}
 	
-	private Button createCartButton() {
+	private Button createAddVendButton(Vendedor vend) {
 		Button button = new Button();
-		button.setIcon(FontAwesome.SHOPPING_CART);
+		button.setIcon(FontAwesome.PLUS_SQUARE_O);
 		
 		button.addClickListener(new Button.ClickListener() {
 			
@@ -155,10 +174,37 @@ public class NotaUI {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				GridLayout layout = (GridLayout) addProdPnl.getParent();
-				if(addProdPnl.isVisible()) {
+				vendPedido = vend;
+				Notification.show("Vendedor agregado",
+						"El vendedor ha sido agregado al pedido",
+			            Notification.Type.TRAY_NOTIFICATION);
+			}
+		});
+
+		return button;
+	}
+	
+	private Button createCartButton() {
+		Button button = new Button();
+		button.setIcon(FontAwesome.SHOPPING_CART);
+
+		
+		button.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				GridLayout layout = (GridLayout) (addProdPnl.getParent() != null ? addProdPnl.getParent() : vendProdPnl.getParent());
+				if(addProdPnl.isVisible() || vendProdPnl.isVisible()) {
 					addProdPnl.setVisible(false);
+					vendProdPnl.setVisible(false);
+					mngmtProdPnl.setVisible(true);
 					layout.removeComponent(addProdPnl);
+					layout.removeComponent(vendProdPnl);
 					layout.addComponent(mngmtProdPnl, 0, 2, 4, 3);
 				}
 			}
@@ -167,9 +213,9 @@ public class NotaUI {
 		return button;
 	}
 	
-	private Button createNextButton() {
+	private Button createVendedorButton() {
 		Button button = new Button();
-		button.setIcon(FontAwesome.CHEVRON_CIRCLE_RIGHT);
+		button.setIcon(FontAwesome.USER);
 		
 		button.addClickListener(new Button.ClickListener() {
 			
@@ -180,13 +226,93 @@ public class NotaUI {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				GridLayout layout = (GridLayout) addProdPnl.getParent();
-				
-				/*if(addProdPnl.isVisible()) {
+				GridLayout layout = (GridLayout) (addProdPnl.getParent()!= null ? addProdPnl.getParent() : mngmtProdPnl.getParent());
+				if(addProdPnl.isVisible() || mngmtProdPnl.isVisible()) {
 					addProdPnl.setVisible(false);
+					mngmtProdPnl.setVisible(false);
+					vendProdPnl.setVisible(true);
 					layout.removeComponent(addProdPnl);
-					layout.addComponent(mngmtProdPnl);
-				}*/
+					layout.removeComponent(mngmtProdPnl);
+					layout.addComponent(vendProdPnl, 0, 2, 4, 3);
+				}
+			}
+		});
+
+		return button;
+	}
+	
+	private Button createPedidoButton() {
+		Button button = new Button();
+		button.setIcon(FontAwesome.TRUCK);
+		
+		button.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				GridLayout layout = (GridLayout) (mngmtProdPnl.getParent()!= null ? mngmtProdPnl.getParent() : vendProdPnl.getParent());
+				if(mngmtProdPnl.isVisible() || vendProdPnl.isVisible()) {
+					mngmtProdPnl.setVisible(false);
+					vendProdPnl.setVisible(false);
+					addProdPnl.setVisible(true);
+					layout.removeComponent(mngmtProdPnl);
+					layout.removeComponent(vendProdPnl);
+					layout.addComponent(addProdPnl, 0, 2, 4, 3);
+				}
+			}
+		});
+
+		return button;
+	}
+	
+	private Button createBorrarButton(Table table, Object id) {
+		Button button = new Button();
+		button.setIcon(FontAwesome.TRASH_O);
+		
+		button.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				table.removeItem(id);
+				table.refreshRowCache();
+			}
+		});
+
+		return button;
+	}
+	
+	private Button createGuardarButton() {
+		Button button = new Button(UIConstants.GUARDAR);
+		
+		button.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				NotaRemision nr = new NotaRemision();
+				
+				nr.setId(Integer.parseInt(numero.getValue()));
+				nr.setTotal(ProductoUtils.sumaImportes(pedidoTbl));
+				nr.setFecha(fecha.getValue());
+				nr.setVendedor(vendPedido);
+				for(NotaRemisionDetalle nrd : prodsPedido) {
+					nrd.setNotaRemision(nr);
+					nr.getNotaRemisionDetalles().add(nrd);
+				}
+				model.insertPedido(nr);
 			}
 		});
 
@@ -205,18 +331,17 @@ public class NotaUI {
 		Panel prodPnl = new Panel();
 		VerticalLayout layout =  new VerticalLayout();
 		Table result = new Table();
-		IndexedContainer container = createResultContainer();
+		IndexedContainer container = createProductosContainer();
 		
-		searcher = createSearcher(container, result);
+		prodSearcher = createSearcher(container, result);
 		
-		searcher.setWidth("400");
+		prodSearcher.setWidth("400");
 		result.setContainerDataSource(container);
 		result.setSelectable(true);
 		result.setPageLength(5);
 		result.setWidth("700");
-		//prodPnl.setWidth("550");
 		
-		layout.addComponent(searcher);
+		layout.addComponent(prodSearcher);
 		layout.addComponent(result);
 		
 		layout.setSpacing(true);
@@ -229,17 +354,26 @@ public class NotaUI {
 	private Panel createPanelMngmtProductos() {
 		Panel prodPnl = new Panel();
 		VerticalLayout layout =  new VerticalLayout();
+		HorizontalLayout btnsArea = new HorizontalLayout();
+		totalLbl = new Label();
 		pedidoTbl = new Table();
 		pedidoCntnr = createPedidoContainer();
+		Button guardarBtn = createGuardarButton();
 		Label lblPedido = new Label(UIConstants.PEDIDO_CREANDO);
 		
 		pedidoTbl.setContainerDataSource(pedidoCntnr);
 		pedidoTbl.setSelectable(true);
 		pedidoTbl.setPageLength(5);
 		pedidoTbl.setWidth("700");
-		//prodPnl.setWidth("550");
+		
+		btnsArea.addComponent(guardarBtn);
+		btnsArea.setSpacing(true);
+		
 		layout.addComponent(lblPedido);
 		layout.addComponent(pedidoTbl);
+		layout.addComponent(totalLbl);
+		layout.setComponentAlignment(totalLbl, Alignment.MIDDLE_LEFT);
+		layout.addComponent(btnsArea);
 		
 		layout.setSpacing(true);
 		layout.setMargin(true);
@@ -248,7 +382,32 @@ public class NotaUI {
 		return prodPnl;
 	}
 	
-	private IndexedContainer createResultContainer() {
+	private Panel createPanelVendedorProductos() {
+		Panel vendedorPnl = new Panel();
+		VerticalLayout layout =  new VerticalLayout();
+		Table result = new Table();
+		IndexedContainer container = createVendedorContainer();
+		//Label lblVendedor = new Label(UIConstants.PEDIDO_CREANDO);
+		
+		vendSearcher = createVendedorSearcher(container, result);
+		
+		vendSearcher.setWidth("400");
+		result.setContainerDataSource(container);
+		result.setSelectable(true);
+		result.setPageLength(5);
+		result.setWidth("700");
+		
+		layout.addComponent(vendSearcher);
+		layout.addComponent(result);
+		
+		layout.setSpacing(true);
+		layout.setMargin(true);
+		
+		vendedorPnl.setContent(layout);
+		return vendedorPnl;
+	}
+	
+	private IndexedContainer createProductosContainer() {
 		IndexedContainer container = new IndexedContainer();
 		container.addContainerProperty(UIConstants.PRODUCTO_NOMBRE, String.class, null);
 		container.addContainerProperty(UIConstants.PRODUCTO_PRECIO_VENTA, Double.class, null);
@@ -270,9 +429,19 @@ public class NotaUI {
 		
 		return container;
 	}
+	
+	private IndexedContainer createVendedorContainer() {
+		IndexedContainer container = new IndexedContainer();
+		container.addContainerProperty(UIConstants.VENDEDOR_NOMBRE, String.class, null);
+		container.addContainerProperty(UIConstants.VENDEDOR_USUARIO, String.class, null);
+		container.addContainerProperty(UIConstants.AGREGAR, Button.class, null);
+		
+		return container;
+	}
+	@SuppressWarnings("unchecked")
 	private void executeFindProductosByParameters(IndexedContainer container, Table table) {
 		ProductoModel model = new ProductoModel();
-		List<Producto> productos = model.findProductoByParameters(searcher.getValue());
+		List<Producto> productos = model.findProductoByParameters(prodSearcher.getValue());
 		container.removeAllItems();
 		for(Producto producto : productos) {
 			Object id = container.addItem();
@@ -288,21 +457,38 @@ public class NotaUI {
 		table.refreshRowCache();
 	}
 	
+	private void executeFindVendedorByParameters(IndexedContainer container, Table table) {
+		VendedorModel model = new VendedorModel();
+		List<Vendedor> vendedores = model.findVendedoresByParameters(vendSearcher.getValue());
+		container.removeAllItems();
+		for(Vendedor vendedor : vendedores) {
+			Object id = container.addItem();
+			Item item = container.getItem(id);
+			
+			item.getItemProperty(UIConstants.VENDEDOR_NOMBRE).setValue(vendedor.getNombre());
+			item.getItemProperty(UIConstants.VENDEDOR_USUARIO).setValue(vendedor.getUsuario());
+			item.getItemProperty(UIConstants.AGREGAR).setValue(createAddVendButton(vendedor));
+		}
+		
+		table.refreshRowCache();
+	}
+	
+	@SuppressWarnings("unchecked")
 	private void refreshPedidoContainer() {
 		pedidoCntnr.removeAllItems();
+		ProductoModel model = new ProductoModel();
 		for(NotaRemisionDetalle detalle : prodsPedido) {
 			Object id = pedidoCntnr.addItem();
 			Item item = pedidoCntnr.getItem(id);
-			Producto producto = detalle.getProductos();
-			NotaRemisionDetalleId nrId = detalle.getId();
+			Producto producto = model.findProductoByCode(detalle.getProductoId());
 			Double precioVenta = ProductoUtils.calculatePrecioVenta(producto.getPrecioCompra(), producto.getPorcentaje());
-			Double importe = precioVenta * nrId.getCantidad();
+			Double importe = precioVenta * detalle.getCantidad();
 			item.getItemProperty(UIConstants.PRODUCTO_NOMBRE).setValue(producto.getNombre());
 			item.getItemProperty(UIConstants.PRODUCTO_PRECIO_VENTA).setValue(precioVenta);
 			item.getItemProperty(UIConstants.PRODUCTO_IVA).setValue(producto.getIva()? "Si":"No");
-			item.getItemProperty(UIConstants.PEDIDO_CANTIDAD).setValue(nrId.getCantidad());
+			item.getItemProperty(UIConstants.PEDIDO_CANTIDAD).setValue(detalle.getCantidad());
 			item.getItemProperty(UIConstants.PEDIDO_IMPORTE).setValue(importe);
-//			item.getItemProperty(UIConstants.AGREGAR).setValue(createAddButton(producto, txCantidad.getValue()));
+			item.getItemProperty(UIConstants.BUTTON_CANCELAR).setValue(createBorrarButton(pedidoTbl, id));
 		}
 		pedidoTbl.refreshRowCache();
 	}

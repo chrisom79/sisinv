@@ -1,5 +1,5 @@
 package com.chrisom.sisinv.entity;
-// Generated 09-ago-2015 19:16:00 by Hibernate Tools 3.4.0.CR1
+// Generated 27-oct-2015 22:28:42 by Hibernate Tools 3.4.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -10,37 +10,42 @@ import java.util.Set;
  */
 public class NotaRemision implements java.io.Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7719128964041487555L;
-	private Integer id;
+	private int id;
 	private Vendedor vendedor;
 	private Date fecha;
 	private double total;
+	private String nombre;
+	private String direccion;
+	private String ciudad;
 	private Set<NotaRemisionDetalle> notaRemisionDetalles = new HashSet<NotaRemisionDetalle>(0);
 
 	public NotaRemision() {
 	}
 
-	public NotaRemision(Vendedor vendedor, Date fecha, double total) {
+	public NotaRemision(int id, Vendedor vendedor, Date fecha, double total) {
+		this.id = id;
 		this.vendedor = vendedor;
 		this.fecha = fecha;
 		this.total = total;
 	}
 
-	public NotaRemision(Vendedor vendedor, Date fecha, double total, Set<NotaRemisionDetalle> notaRemisionDetalles) {
+	public NotaRemision(int id, Vendedor vendedor, Date fecha, double total, String nombre, String direccion,
+			String ciudad, Set notaRemisionDetalles) {
+		this.id = id;
 		this.vendedor = vendedor;
 		this.fecha = fecha;
 		this.total = total;
+		this.nombre = nombre;
+		this.direccion = direccion;
+		this.ciudad = ciudad;
 		this.notaRemisionDetalles = notaRemisionDetalles;
 	}
 
-	public Integer getId() {
+	public int getId() {
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -66,6 +71,30 @@ public class NotaRemision implements java.io.Serializable {
 
 	public void setTotal(double total) {
 		this.total = total;
+	}
+
+	public String getNombre() {
+		return this.nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getDireccion() {
+		return this.direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public String getCiudad() {
+		return this.ciudad;
+	}
+
+	public void setCiudad(String ciudad) {
+		this.ciudad = ciudad;
 	}
 
 	public Set<NotaRemisionDetalle> getNotaRemisionDetalles() {

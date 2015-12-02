@@ -5,7 +5,7 @@
 <hibernate-mapping>
     <class name="com.chrisom.sisinv.entity.Producto" table="producto" catalog="dbsisinv">
         <id name="id" type="string">
-            <column name="id" length="30" />
+            <column name="producto_id" length="30" />
             <generator class="assigned" />
         </id>
         <property name="nombre" type="string">
@@ -22,7 +22,7 @@
         </property>
         <set name="notaRemisionDetalles" table="nota_remision_detalle" inverse="true" lazy="true" fetch="select">
             <key>
-                <column name="productos_id" length="7" not-null="true" />
+                <column name="producto_id" length="7" not-null="true" />
             </key>
             <one-to-many class="com.chrisom.sisinv.entity.NotaRemisionDetalle" />
         </set>

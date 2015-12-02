@@ -1,6 +1,7 @@
 package com.chrisom.sisinv.model;
 
 import com.chrisom.sisinv.dao.PedidoDAO;
+import com.chrisom.sisinv.entity.NotaRemision;
 
 public class PedidoModel {
 	PedidoDAO dao = new PedidoDAO();
@@ -14,5 +15,9 @@ public class PedidoModel {
 		}
 		
 		return id + 1;
+	}
+	
+	public void insertPedido(NotaRemision pedido) {
+		dao.insert(pedido);
 	}
 }

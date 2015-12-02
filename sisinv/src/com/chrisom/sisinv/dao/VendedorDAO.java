@@ -21,9 +21,7 @@ public class VendedorDAO implements DAOInterface<Vendedor>{
 			session.getTransaction().commit();
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
-		} finally {
-			//SessionFactoryDB.shutdown();
-		}
+		} 
 		
 	}
 	
@@ -121,6 +119,20 @@ public class VendedorDAO implements DAOInterface<Vendedor>{
 		
 		vendedores.addAll(query.list());
 		
+		return vendedores;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Vendedor> findVendedorByUnifiedParameters(String value) {
+		List<Vendedor> vendedores = new ArrayList<Vendedor>();
+		Session session = SessionFactoryDB.getSessionFactory().openSession();
+		
+		StringBuffer querySb = new StringBuffer("from Vendedor where nombre like :value or usuario like :value");
+		Query query = session.createQuery(querySb.toString());
+		
+		query.setParameter("value", "%" + value + "%");
+		
+		vendedores.addAll(query.list());
 		return vendedores;
 	}
 	

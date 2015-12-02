@@ -27,14 +27,17 @@ public class UIConstants {
 	public final static String PEDIDO_NOMBRE = "Nombre de cliente";
 	public final static String PEDIDO_DIRECCION = "Direccion";
 	public final static String PEDIDO_PRODUCTO_SRCHR = "Buscar Producto";
+	public final static String PEDIDO_VENDEDOR_SRCHR = "Buscar Vendedor";
 	public final static String PEDIDO_CANTIDAD = "Cantidad";
 	public final static String PEDIDO_CREANDO = "Creando Pedido";
+	
 	public final static String PEDIDO_IMPORTE = "Importe";
 	
 	public final static String LAUNCH_WINDOW = "Editar";
 	public final static String REMOVE = "Borrar";
 	public final static String EDITAR_USUARIO_ITEM = "Editar usuarios";
 	public final static String AGREGAR = "Agregar";
+	public final static String GUARDAR = "Guardar";
 	
 	public final static String LOGIN_USUARIO = "Acceder";
 	public final static String LOGIN_NAME = "Usuario";

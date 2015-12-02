@@ -23,7 +23,7 @@ public class VendedorModel {
 		
 		for(String name : splitted){
 			if(name != null && !name.trim().isEmpty())
-				sb.append(name.substring(0, 3));
+				sb.append(name.substring(0, 1));
 		}
 		sb.append(dao.countIds(sb.toString()) + 1);
 		return sb.toString().toLowerCase();
@@ -47,6 +47,10 @@ public class VendedorModel {
 	
 	public List<Vendedor> findVendedoresByParameters(String nombre, String telefono, String usuario) {
 		return dao.findVendedorByParameters(nombre, telefono, usuario);
+	}
+	
+	public List<Vendedor> findVendedoresByParameters(String value) {
+		return dao.findVendedorByUnifiedParameters(value);
 	}
 	
 	public Vendedor findVendedorByUsuario(String username){

@@ -21,9 +21,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.zybnet.autocomplete.server.AutocompleteField;
-import com.zybnet.autocomplete.server.AutocompleteQueryListener;
-import com.zybnet.autocomplete.server.AutocompleteSuggestionPickedListener;
 
 public class ProductoUI {
 	TextField id = null;

@@ -9,7 +9,15 @@ public class PedidoDAO implements DAOInterface<NotaRemision> {
 
 	@Override
 	public void insert(NotaRemision element) {
-		// TODO Auto-generated method stub
+		Session session = SessionFactoryDB.getSessionFactory().openSession();
+		try {
+			
+			session.beginTransaction();
+			session.save(element);
+			session.getTransaction().commit();
+		} catch (Exception ex) {
+			session.getTransaction().rollback();
+		} 
 		
 	}
 
