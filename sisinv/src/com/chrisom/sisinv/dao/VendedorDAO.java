@@ -12,17 +12,18 @@ public class VendedorDAO implements DAOInterface<Vendedor>{
 	
 
 	@Override
-	public void insert(Vendedor vendedor) {
+	public String insert(Vendedor vendedor) {
 		Session session = SessionFactoryDB.getSessionFactory().openSession();
+		String id = null;
 		try {
 			
 			session.beginTransaction();
-			session.save(vendedor);
+			id = session.save(vendedor).toString();
 			session.getTransaction().commit();
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
 		} 
-		
+		return id;
 	}
 	
 	@Override

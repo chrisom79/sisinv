@@ -8,16 +8,19 @@ import com.chrisom.sisinv.entity.NotaRemision;
 public class PedidoDAO implements DAOInterface<NotaRemision> {
 
 	@Override
-	public void insert(NotaRemision element) {
+	public String insert(NotaRemision element) {
 		Session session = SessionFactoryDB.getSessionFactory().openSession();
+		String id =  null;
 		try {
 			
 			session.beginTransaction();
-			session.save(element);
+			id = session.save(element).toString();
 			session.getTransaction().commit();
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
 		} 
+		
+		return id;
 		
 	}
 

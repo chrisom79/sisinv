@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.chrisom.report.ReportGenerator;
 import com.chrisom.sisinv.entity.NotaRemision;
 import com.chrisom.sisinv.entity.NotaRemisionDetalle;
 import com.chrisom.sisinv.entity.NotaRemisionDetalleId;
@@ -34,7 +35,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Button.ClickEvent;
 
-public class NotaUI {
+public class PedidoUI {
 	DateField fecha = null;
 	TextField numero = null;
 	TextField nombre = null;
@@ -49,6 +50,7 @@ public class NotaUI {
 	Table pedidoTbl = null;
 	PedidoModel model = new PedidoModel();
 	Label totalLbl = null;
+	NotaRemision nr = null;
 	
 	public Window createWindowNew() {
 		Window notaWndw = new Window(UIConstants.PEDIDO_ITEM);
@@ -302,17 +304,35 @@ public class NotaUI {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				NotaRemision nr = new NotaRemision();
-				
-				nr.setId(Integer.parseInt(numero.getValue()));
-				nr.setTotal(ProductoUtils.sumaImportes(pedidoTbl));
-				nr.setFecha(fecha.getValue());
-				nr.setVendedor(vendPedido);
-				for(NotaRemisionDetalle nrd : prodsPedido) {
-					nrd.setNotaRemision(nr);
-					nr.getNotaRemisionDetalles().add(nrd);
+				createPedidoObject();
+				String id = model.insertPedido(nr);
+				if(id != null || !id.isEmpty()) {
+					Notification.show("Pedido guardado",
+							"El pedido ha sido guardado",
+				            Notification.Type.TRAY_NOTIFICATION);
 				}
-				model.insertPedido(nr);
+			}
+		});
+
+		return button;
+	}
+	
+	private Button createImprimirButton() {
+		Button button = new Button(UIConstants.IMPRIMIR);
+		
+		button.addClickListener(new Button.ClickListener() {
+			
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				ReportGenerator rg = new ReportGenerator();
+				
+				createPedidoObject();
+				rg.callingPedido(nr);
 			}
 		});
 
@@ -359,6 +379,7 @@ public class NotaUI {
 		pedidoTbl = new Table();
 		pedidoCntnr = createPedidoContainer();
 		Button guardarBtn = createGuardarButton();
+		Button imprimirBtn = createImprimirButton();
 		Label lblPedido = new Label(UIConstants.PEDIDO_CREANDO);
 		
 		pedidoTbl.setContainerDataSource(pedidoCntnr);
@@ -367,6 +388,7 @@ public class NotaUI {
 		pedidoTbl.setWidth("700");
 		
 		btnsArea.addComponent(guardarBtn);
+		btnsArea.addComponent(imprimirBtn);
 		btnsArea.setSpacing(true);
 		
 		layout.addComponent(lblPedido);
@@ -491,5 +513,21 @@ public class NotaUI {
 			item.getItemProperty(UIConstants.BUTTON_CANCELAR).setValue(createBorrarButton(pedidoTbl, id));
 		}
 		pedidoTbl.refreshRowCache();
+	}
+	
+	private void createPedidoObject() {
+		if(nr == null) {
+			nr = new NotaRemision();
+			
+			nr.setId(Integer.parseInt(numero.getValue()));
+			nr.setTotal(ProductoUtils.sumaImportes(pedidoTbl));
+			nr.setFecha(fecha.getValue());
+			nr.setVendedor(vendPedido);
+			nr.setNombre(nombre.getValue());
+			for(NotaRemisionDetalle nrd : prodsPedido) {
+				nrd.setNotaRemision(nr);
+				nr.getNotaRemisionDetalles().add(nrd);
+			}
+		}
 	}
 }

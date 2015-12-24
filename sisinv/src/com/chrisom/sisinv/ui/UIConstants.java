@@ -38,6 +38,7 @@ public class UIConstants {
 	public final static String EDITAR_USUARIO_ITEM = "Editar usuarios";
 	public final static String AGREGAR = "Agregar";
 	public final static String GUARDAR = "Guardar";
+	public final static String IMPRIMIR = "Imprimir";
 	
 	public final static String LOGIN_USUARIO = "Acceder";
 	public final static String LOGIN_NAME = "Usuario";

@@ -17,7 +17,7 @@
         <property name="productoId" type="string">
             <column name="producto_id" length="30" not-null="true" />
         </property>
-         <many-to-one name="notaRemision" class="com.chrisom.sisinv.entity.NotaRemision" fetch="select">
+         <many-to-one name="notaRemision" class="com.chrisom.sisinv.entity.NotaRemision" fetch="select" >
         	<column name="notaremision_id" not-null="true"></column>
         </many-to-one>
     </class>

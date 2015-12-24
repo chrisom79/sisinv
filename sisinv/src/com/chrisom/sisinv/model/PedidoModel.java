@@ -17,7 +17,7 @@ public class PedidoModel {
 		return id + 1;
 	}
 	
-	public void insertPedido(NotaRemision pedido) {
-		dao.insert(pedido);
+	public String insertPedido(NotaRemision pedido) {
+		return dao.insert(pedido);
 	}
 }

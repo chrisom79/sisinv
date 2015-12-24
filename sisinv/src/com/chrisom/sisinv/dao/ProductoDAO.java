@@ -11,17 +11,18 @@ import com.chrisom.sisinv.entity.Producto;
 public class ProductoDAO implements DAOInterface<Producto> {
 
 	@Override
-	public void insert(Producto element) {
+	public String insert(Producto element) {
 		Session session = SessionFactoryDB.getSessionFactory().openSession();
+		String id = null;
 		try {
 			
 			session.beginTransaction();
-			session.save(element);
+			id = session.save(element).toString();
 			session.getTransaction().commit();
 		} catch (Exception ex) {
 			session.getTransaction().rollback();
 		}
-		
+		return id;
 	}
 
 	@Override

@@ -9,7 +9,7 @@ public class Menu {
 		MenuBar mainBar =  new MenuBar();
 		VendedorUI vendedorUI = new VendedorUI();
 		ProductoUI productoUI = new ProductoUI();
-		NotaUI notaUI = new NotaUI();
+		PedidoUI notaUI = new PedidoUI();
 		
 		MenuBar.Command command = new MenuBar.Command() {
 			
